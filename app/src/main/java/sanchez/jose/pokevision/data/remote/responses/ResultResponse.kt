@@ -1,9 +1,7 @@
 package sanchez.jose.pokevision.data.remote.responses
 
 
-import com.google.gson.annotations.SerializedName
-
-data class Result(
+data class ResultResponse(
     val name: String,
     val url: String
 )

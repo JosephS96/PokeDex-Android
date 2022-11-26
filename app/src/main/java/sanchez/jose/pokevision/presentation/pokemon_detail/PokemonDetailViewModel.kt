@@ -20,4 +20,5 @@ class PokemonDetailViewModel @Inject constructor(
     suspend fun loadPokemonDetails(name: String): Resource<Pokemon> {
         return repository.getPokemonInfo(name)
     }
+
 }

@@ -1,11 +1,9 @@
 package sanchez.jose.pokevision.data.remote.responses
 
 
-import com.google.gson.annotations.SerializedName
-
-data class PokemonList(
+data class PokemonListResponse(
     val count: Int,
     val next: String,
     val previous: Any,
-    val results: List<Result>
+    val results: List<ResultResponse>
 )

@@ -65,6 +65,12 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    fun loadPokemonPaginatedFlow() {
+        viewModelScope.launch {
+            val result = repository.getPokemonListFlow(PAGE_SIZE, currentPage * PAGE_SIZE)
+        }
+    }
+
     fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
         val bitmap = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
