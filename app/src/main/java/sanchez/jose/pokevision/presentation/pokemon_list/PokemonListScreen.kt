@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.collect
 import sanchez.jose.pokevision.data.PokedexListEntry
 import sanchez.jose.pokevision.presentation.pokemon_list.components.PokedexEntry
 import sanchez.jose.pokevision.presentation.pokemon_list.components.SearchBar
@@ -107,7 +109,7 @@ fun PokemonList(
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
-    
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
@@ -117,7 +119,9 @@ fun PokemonList(
         val itemCount = pokemonList.size
         itemsIndexed(pokemonList) { idx, pokemon ->
             if (idx >= itemCount -1 && !endReached) {
-                viewModel.loadPokemonPaginated()
+                //viewModel.loadPokemonPaginated()
+                viewModel.loadPokemonPaginatedFlow()
+                println("End of list")
             }
 
             PokedexEntry(entry = pokemon, navController = navController)

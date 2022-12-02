@@ -29,15 +29,19 @@ inline fun <CacheType, NetworkType, DomainType> networkBoundResource(
 
     val flow = if (shouldFetch(data)) {
         emit(Resource.Loading(toDomainType(data)))
-
+        println("Network Bound Resource: Loading")
         try {
+            println("Network Bound Resource: Fetching")
             saveFetchResult(fetch())
+            println("Network Bound Resource: Success")
             query().map { Resource.Success(toDomainType(it)) }
         } catch (throwable: Throwable) {
             onFetchFailed(throwable)
+            println("Network Bound Resource: Failed")
             query().map { Resource.Error("throwable", toDomainType(it)) }
         }
     } else {
+        println("Network Bound Resource: Success")
         query().map { Resource.Success(toDomainType(it)) }
     }
 

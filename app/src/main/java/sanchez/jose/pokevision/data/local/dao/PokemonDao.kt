@@ -11,10 +11,11 @@ import sanchez.jose.pokevision.data.remote.responses.Pokemon
 interface PokemonDao {
 
     @Query("SELECT * FROM pokemon WHERE id = :id LIMIT 1")
-    fun getPokemonById(id: Int): PokemonEntity
+    suspend fun getPokemonById(id: Int): PokemonEntity
 
     @Insert
-    fun insertPokemon(pokemon: Pokemon)
+    suspend fun insertPokemon(pokemon: PokemonEntity)
 
-    fun getPokemonList(limit: Int, offset: Int): Flow<PokemonEntity>
+    @Query("SELECT * FROM pokemon LIMIT :limit")
+    fun getPokemonList(limit: Int): Flow<PokemonEntity>
 }

@@ -3,12 +3,17 @@ package sanchez.jose.pokevision.presentation.pokemon_list
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import sanchez.jose.pokevision.data.PokedexListEntry
 import sanchez.jose.pokevision.data.repository.PokemonRepositoryImpl
@@ -30,9 +35,39 @@ class PokemonListViewModel @Inject constructor(
     var endReached = mutableStateOf(false)
 
     init {
-        loadPokemonPaginated()
+        // loadPokemonPaginated()
+        loadPokemonPaginatedFlow()
     }
 
+    fun loadPokemonPaginatedFlow() {
+        viewModelScope.launch {
+            repository.getPokemonListFlow(PAGE_SIZE, currentPage * PAGE_SIZE)
+                .collect { result ->
+                    when(result) {
+                        is Resource.Success -> {
+                            endReached.value = currentPage * PAGE_SIZE >= result.data!!.count()
+                            val pokedexEntries = result.data.mapIndexed { index, entry ->
+                                // PokedexListEntry(entry.name.capitalize(Locale.ROOT), url)
+                                PokedexListEntry(entry.name.capitalize(Locale.ROOT), entry.url, entry.number)
+                            }
+                            currentPage++
+                            println("Current page $currentPage")
+                            loadError.value = ""
+                            isLoading.value = false
+                            pokemonList.value = pokedexEntries ?: emptyList()
+                        }
+                        is Resource.Error -> {
+                            loadError.value = result.message ?: ""
+                        }
+                        is Resource.Loading -> {
+                            isLoading.value = true
+                        }
+                    }
+                }
+        }
+    }
+
+    /*
     fun loadPokemonPaginated() {
         viewModelScope.launch {
             val result = repository.getPokemonList(PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -63,17 +98,5 @@ class PokemonListViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun loadPokemonPaginatedFlow() {
-        viewModelScope.launch {
-            val result = repository.getPokemonListFlow(PAGE_SIZE, currentPage * PAGE_SIZE)
-        }
-    }
-
-    fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
-        val bitmap = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-        onFinish(Color.LightGray)
-    }
+    }*/
 }
