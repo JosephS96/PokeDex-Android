@@ -1,6 +1,7 @@
 package sanchez.jose.pokevision.presentation.pokemon_list
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -109,6 +110,14 @@ fun PokemonList(
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
+
+    if (isLoading) {
+        CircularProgressIndicator()
+    }
+
+    if (loadError.isNotEmpty()) {
+        Toast.makeText(LocalContext.current, loadError, Toast.LENGTH_LONG).show()
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),

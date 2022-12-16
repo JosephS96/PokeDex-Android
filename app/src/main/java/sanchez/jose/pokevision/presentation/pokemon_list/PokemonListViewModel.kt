@@ -58,6 +58,14 @@ class PokemonListViewModel @Inject constructor(
                         }
                         is Resource.Error -> {
                             loadError.value = result.message ?: ""
+                            if (!result.data.isNullOrEmpty()) {
+                                val pokedexEntries = result.data.map { entry ->
+                                    PokedexListEntry(entry.name.capitalize(Locale.ROOT), entry.url, entry.number)
+
+                                }
+                                pokemonList.value = pokedexEntries
+                            }
+                            isLoading.value = false
                         }
                         is Resource.Loading -> {
                             isLoading.value = true
